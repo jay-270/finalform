@@ -560,7 +560,13 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
     country: "",
     hobbies: [],
   });
-  console.log("user" + typeof user);
+
+  const [inputFields, setInputFields] = useState([
+    {
+      language: "",
+    },
+  ]);
+
   const [errors, setErrors] = useState({
     firstName: "",
     lastName: "",
@@ -569,6 +575,7 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
     gender: "",
     country: "",
     hobbies: "",
+    languages: "",
   });
   // const [serial, setSerial] = useState();
   useEffect(() => {
@@ -599,6 +606,7 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
       gender: "",
       country: "",
       hobbies: "",
+      languages: "",
     });
 
     if (user.firstName === "") {
@@ -671,8 +679,75 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
         hobbies: "",
       }));
     }
+    if (user.languages.length === 0) {
+      setErrors((previous) => ({
+        ...previous,
+        languages: "Please enter atleast one programming language ",
+      }));
+      isValid = false;
+    }
 
     return isValid;
+  };
+
+  const handleFieldChange = (index, e) => {
+    let formValues = [...inputFields];
+    formValues[index][e.target.name] = e.target.value;
+    setInputFields(formValues);
+    setUser((previous) => ({
+      ...previous,
+      languages: [...inputFields],
+    }));
+  };
+
+  let removeFormFields = (i) => {
+    let newFormValues = [...inputFields];
+    newFormValues.splice(i, 1);
+    setInputFields(newFormValues);
+  };
+
+  const addFields = () => {
+    setInputFields([...inputFields, { language: "" }]);
+  };
+
+  const addTextfield = () => {
+    console.log("in add text field");
+    return inputFields.map((value, index) => {
+      return (
+        <div className="form-group row" key={index}>
+          <div className="col">
+            <input
+              type="text"
+              className={
+                errors.languages !== ""
+                  ? "form-control border-danger"
+                  : "form-control"
+              }
+              id={`${index}`}
+              name="language"
+              value={inputFields[index].language}
+              placeholder="Enter your programming languages...."
+              onChange={(e) => handleFieldChange(index, e)}
+            />
+          </div>
+          <div className="col">
+            {index === 0 ? (
+              <i
+                className="fa fa-plus-circle"
+                onClick={addFields}
+                style={{ color: "#74C0FC", fontSize: "25px" }}
+              />
+            ) : (
+              <i
+                className="fa fa-minus-circle fa-2xl"
+                onClick={removeFormFields}
+                style={{ color: "#ff0000", fontSize: "25px" }}
+              />
+            )}
+          </div>
+        </div>
+      );
+    });
   };
 
   const updateTable = () => {
@@ -732,7 +807,6 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
     updateTable();
     // alert("Data is Changed ✅👌");
   };
-  
 
   return (
     <>
@@ -1039,6 +1113,22 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
                                   {errors.country !== "" && (
                                     <label className="text-danger">
                                       {errors.country}
+                                    </label>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="form-group row">
+                                <div className="col">
+                                  <label htmlFor="email">
+                                    Programing languages
+                                  </label>
+                                  {addTextfield()}
+                                  {errors.languages !== "" && (
+                                    <label
+                                      htmlFor="email"
+                                      className="text-danger"
+                                    >
+                                      {errors.languages}
                                     </label>
                                   )}
                                 </div>

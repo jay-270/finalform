@@ -8,22 +8,35 @@ const ReactTable = (props) => {
   const [filter, setFilter] = useState([]);
   const [tableData, setTableData] = useState(props.info);
   //   useEffect(()=>{
-  //     setTableData(JSON.parse(localStorage.getItem("userData")));
-  //   },[])
+    //     setTableData(JSON.parse(localStorage.getItem("userData")));
+    //   },[])
+    const [filterText, setFilterText] = React.useState("");
+    const [resetPaginationToggle, setResetPaginationToggle] =
+    React.useState(false);
+    const data = tableData;
+    const filteredItems = data.filter(
+    (item) =>
+      item.name && item.name.toLowerCase().includes(filterText.toLowerCase())
+  );
+  const subHeaderComponentMemo = React.useMemo(() => {
+    const handleClear = () => {
+      if (filterText) {
+        setResetPaginationToggle(!resetPaginationToggle);
+        setFilterText("");
+      }
+    };
+    return (
+      <FilterComponent
+        onFilter={(e) => setFilterText(e.target.value)}
+        onClear={handleClear}
+        filterText={filterText}
+      />
+    );
+  }, [filterText, resetPaginationToggle]);
   useEffect(() => {
     setTableData(props.info);
   }, [props.info]);
-  useEffect(() => {
-    const result = data.filter((item) => {
-      return item.firstName.toLowerCase().includes(search.toLowerCase());
-    });
 
-    setFilter(result);
-  }, [search]);
-  const handleDelete = (val) => {
-    const newdata = data.filter((item) => item.id !== val);
-    setFilter(newdata);
-  };
   const columns = [
     {
       name: "First Name",
@@ -51,48 +64,37 @@ const ReactTable = (props) => {
     },
     {
       name: "Hobbies",
-      selector: (row) => row.hobbies.join(', '),
+      selector: (row) => row.hobbies.join(", "),
     },
     {
       name: "Languages",
       selector: (row) =>
-        row.languages.map((languageObj) => languageObj.language).join(', '),
+        row.languages.map((languageObj) => languageObj.language).join(", "),
     },
 
     {
       name: "Action",
-      cell: (row) => (
-        <ButtonComponent />
-      ),
+      cell: (row) => <ButtonComponent />,
     },
     // {
     //     name:"Image",
     //     selector:(row)=>(
     //         <img height={70} width={80} src="https://source.unsplash.com/random/1920x1080/?people"/>
     //     )
-    // }
   ];
-  const data = tableData;
+    // }
   return (
-    <div>
-      <DataTable
-        columns={columns}
-        data={data}
-        pagination
-        highlightOnHover
-        subHeader
-        subHeaderComponent={
-          <input
-            type="text"
-            className="w-25 form-control"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        }
-        subHeaderAlign="right"
-      />
-    </div>
+    <DataTable
+      title="Contact List"
+      columns={columns}
+      data={filteredItems}
+      pagination
+      paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
+      subHeader
+      subHeaderComponent={subHeaderComponentMemo}
+      selectableRows
+      persistTableHead
+    />
   );
 };
 

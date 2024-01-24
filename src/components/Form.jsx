@@ -124,7 +124,7 @@ const Form = () => {
                   ? "form-control border-danger"
                   : "form-control"
               }
-              id={`${counter}`}
+              id={`${index}`}
               name="language"
               value={inputFields[index].language}
               placeholder="Enter your programming languages...."

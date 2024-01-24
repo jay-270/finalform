@@ -2,10 +2,18 @@ import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Table from "./Table";
+import ReactTable from "./ReactTable";
 
 const Form = () => {
   console.log("Form");
   const [userList, setUserList] = useState([]);
+  const [inputFields, setInputFields] = useState([
+    {
+      language: "",
+    },
+  ]);
+  const [file, setFile] = useState();
+  const [counter, setCounter] = useState(0);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("userData"));
@@ -49,6 +57,7 @@ const Form = () => {
     gender: "",
     country: "",
     hobbies: [],
+    languages: [],
   });
 
   const [errors, setErrors] = useState({
@@ -59,6 +68,7 @@ const Form = () => {
     gender: "",
     country: "",
     hobbies: "",
+    languages:""
   });
 
   const countries = {
@@ -77,9 +87,69 @@ const Form = () => {
   };
 
   const renderTable = () => {
-    return <Table info={userList} />;
+    // return <Table info={userList} />;
+    return <ReactTable info={userList} />;
   };
 
+  const handleFieldChange = (index, e) => {
+    let formValues = [...inputFields];
+    formValues[index][e.target.name] = e.target.value;
+    setInputFields(formValues);
+    setUser((previous) => ({
+      ...previous,
+      languages: [...inputFields],
+    }));
+  };
+
+  let removeFormFields = (i) => {
+    let newFormValues = [...inputFields];
+    newFormValues.splice(i, 1);
+    setInputFields(newFormValues);
+  };
+
+  const addFields = () => {
+    setInputFields([...inputFields, { language: "" }]);
+  };
+
+  const addTextfield = () => {
+    console.log("in add text field");
+    return inputFields.map((value, index) => {
+      return (
+        <div className="form-group row" key={index}>
+          <div className="col">
+            <input
+              type="text"
+              className={
+                errors.languages !== ""
+                  ? "form-control border-danger"
+                  : "form-control"
+              }
+              id={`${counter}`}
+              name="language"
+              value={inputFields[index].language}
+              placeholder="Enter your programming languages...."
+              onChange={(e) => handleFieldChange(index, e)}
+            />
+          </div>
+          <div className="col">
+            {index === 0 ? (
+              <i
+                className="fa fa-plus-circle"
+                onClick={addFields}
+                style={{ color: "#74C0FC", fontSize: "25px" }}
+              />
+            ) : (
+              <i
+                className="fa fa-minus-circle fa-2xl"
+                onClick={removeFormFields}
+                style={{ color: "#ff0000", fontSize: "25px" }}
+              />
+            )}
+          </div>
+        </div>
+      );
+    });
+  };
   const forValidation = () => {
     let isValid = true;
     setErrors({
@@ -90,6 +160,7 @@ const Form = () => {
       gender: "",
       country: "",
       hobbies: "",
+      languages:""
     });
 
     if (user.firstName === "") {
@@ -162,9 +233,20 @@ const Form = () => {
         hobbies: "",
       }));
     }
+    if (user.languages.length === 0) {
+      setErrors((previous) => ({
+        ...previous,
+        languages: "Please enter atleast one programming language ",
+      }));
+      isValid = false;
+    } 
 
     return isValid;
   };
+
+ const handleImage=(e)=>{
+  setFile(URL.createObjectURL(e.target.files[0]));
+ }
 
   const handleSubmit = (e) => {
     if (forValidation()) {
@@ -179,6 +261,7 @@ const Form = () => {
           gender: user.gender,
           country: user.country,
           hobbies: user.hobbies,
+          languages: user.languages,
         },
       ]);
 
@@ -194,6 +277,8 @@ const Form = () => {
         country: "",
         hobbies: [],
       });
+      setInputFields([{language:''}])
+      setFile();
     } else {
       notify();
       return false;
@@ -430,6 +515,27 @@ const Form = () => {
                     <label className="text-danger">{errors.country}</label>
                   )}
                 </div>
+              </div>
+              <div className="form-group row">
+                <div className="col">
+                  <label htmlFor="email">Programing languages</label>
+                  {addTextfield()}
+                  {errors.languages !== "" && (
+                    <label htmlFor="email" className="text-danger">
+                      {errors.languages}
+                    </label>
+                  )}
+                </div>
+              </div>
+              <div className="form-group row">
+              <div className="col">
+
+              <input type="file" onChange={handleImage} />
+
+              </div>
+              <div className="col">
+            <img src={file} height="300px" width="500px" />
+              </div>
               </div>
 
               {/* Submit Button */}

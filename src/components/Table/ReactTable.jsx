@@ -1,42 +1,35 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
-import ButtonComponent from "./ButtonComponent";
+import ButtonComponent from "../ButtonComponent";
 
 const ReactTable = (props) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState([]);
   const [tableData, setTableData] = useState(props.info);
   //   useEffect(()=>{
-    //     setTableData(JSON.parse(localStorage.getItem("userData")));
-    //   },[])
-    const [filterText, setFilterText] = React.useState("");
-    const [resetPaginationToggle, setResetPaginationToggle] =
-    React.useState(false);
-    const data = tableData;
-    const filteredItems = data.filter(
-    (item) =>
-      item.name && item.name.toLowerCase().includes(filterText.toLowerCase())
-  );
-  const subHeaderComponentMemo = React.useMemo(() => {
-    const handleClear = () => {
-      if (filterText) {
-        setResetPaginationToggle(!resetPaginationToggle);
-        setFilterText("");
-      }
-    };
-    return (
-      <FilterComponent
-        onFilter={(e) => setFilterText(e.target.value)}
-        onClear={handleClear}
-        filterText={filterText}
-      />
-    );
-  }, [filterText, resetPaginationToggle]);
+  //     setTableData(JSON.parse(localStorage.getItem("userData")));
+  //   },[])
   useEffect(() => {
     setTableData(props.info);
   }, [props.info]);
 
+  useEffect(() => {
+    const result = data.filter((item) => {
+      return item.firstName.toLowerCase().includes(search.toLowerCase());
+    });
+
+    const getData = (receivedData) => {
+      setTableData(receivedData);
+      console.log("this is edited data" + JSON.stringify(receivedData));
+    };
+
+    setFilter(result);
+  }, [search]);
+  const handleDelete = (val) => {
+    const newdata = data.filter((item) => item.id !== val);
+    setFilter(newdata);
+  };
   const columns = [
     {
       name: "First Name",
@@ -74,27 +67,36 @@ const ReactTable = (props) => {
 
     {
       name: "Action",
-      cell: (row) => <ButtonComponent />,
+      cell: (row, index) => <ButtonComponent user={row} />,
     },
     // {
     //     name:"Image",
     //     selector:(row)=>(
     //         <img height={70} width={80} src="https://source.unsplash.com/random/1920x1080/?people"/>
     //     )
-  ];
     // }
+  ];
+  const data = tableData;
   return (
-    <DataTable
-      title="Contact List"
-      columns={columns}
-      data={filteredItems}
-      pagination
-      paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
-      subHeader
-      subHeaderComponent={subHeaderComponentMemo}
-      selectableRows
-      persistTableHead
-    />
+    <div>
+      <DataTable
+        columns={columns}
+        data={data}
+        pagination
+        highlightOnHover
+        subHeader
+        subHeaderComponent={
+          <input
+            type="text"
+            className="w-25 form-control"
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        }
+        subHeaderAlign="right"
+      />
+    </div>
   );
 };
 

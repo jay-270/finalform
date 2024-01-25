@@ -544,13 +544,12 @@
 
 // export default Edit;
 import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Edit = ({ showModal, handleClose, index, getData }) => {
   // const [users, setUsers] = useState([]);
 
-  console.log("In Edit Modal");
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
@@ -559,6 +558,7 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
     gender: "",
     country: "",
     hobbies: [],
+    languages:[],
   });
 
   const [inputFields, setInputFields] = useState([
@@ -579,15 +579,18 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
   });
   // const [serial, setSerial] = useState();
   useEffect(() => {
-    // setSerial(index);
     let existingData = JSON.parse(localStorage.getItem("userData"));
-
     const userData = existingData[index];
-    if (userData) {
+  
+    if (userData) {     
       setUser(userData);
+      const languagesList=userData.languages.map(language => ({ language }))
+      console.log("Language list:", languagesList); 
+      // Initialize inputFields with the languages from userData
+      setInputFields(languagesList);
     }
-  }, [index]); // , users
-
+  }, [index]);
+  
   const countries = {
     India: "India",
     USA: "USA",
@@ -661,7 +664,7 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
     }
     if (!user.email) {
       setErrors((previous) => ({
-        ...previous,
+      ...previous,
         email: "Please enter a email address.",
       }));
       isValid = false;
@@ -692,26 +695,54 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
 
   const handleFieldChange = (index, e) => {
     let formValues = [...inputFields];
-    formValues[index][e.target.name] = e.target.value;
+    formValues[index].language = e.target.value;
     setInputFields(formValues);
+    console.log("Form values", formValues);
     setUser((previous) => ({
       ...previous,
-      languages: [...inputFields],
+      languages: [...formValues[index]],
     }));
   };
-
-  let removeFormFields = (i) => {
+    // const handleFieldChange = (index, e) => {
+      //   let formValues = [...inputFields];
+      //   formValues[index][e.target.name] = e.target.value;
+      //   setInputFields(formValues);
+      //   const languageValues = formValues.map((field) => field.language);
+      //   console.log("Language values:", languageValues);
+      //   setUser((previous) => ({
+        //     ...previous,
+        //     languages: languageValues,
+        //   }));
+        // };
+        
+        
+        let removeFormFields = (i) => {
     let newFormValues = [...inputFields];
-    newFormValues.splice(i, 1);
+
+    newFormValues.splice(i.target.id, 1);
     setInputFields(newFormValues);
   };
 
-  const addFields = () => {
-    setInputFields([...inputFields, { language: "" }]);
+  const addFields = (e) => {
+    if (
+      inputFields[inputFields.length - 1].language !== "" &&
+      inputFields.length < 10
+    ) {
+      setErrors((previous) => ({
+        ...previous,
+        languages: "",
+      }));
+      setInputFields([...inputFields, { language: "" }]);
+    }else{
+    setErrors((previous) => ({
+      ...previous,
+      languages:
+        "Please enter atleast one programming language in last give field",
+    }));
+  }
   };
 
-  const addTextfield = () => {
-    console.log("in add text field");
+  const addTextfield = () => {  
     return inputFields.map((value, index) => {
       return (
         <div className="form-group row" key={index}>
@@ -735,11 +766,13 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
               <i
                 className="fa fa-plus-circle"
                 onClick={addFields}
+                id={`${index}`}
                 style={{ color: "#74C0FC", fontSize: "25px" }}
               />
             ) : (
               <i
                 className="fa fa-minus-circle fa-2xl"
+                id={`${index}`}
                 onClick={removeFormFields}
                 style={{ color: "#ff0000", fontSize: "25px" }}
               />
@@ -1158,18 +1191,6 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
                 >
                   Save changes
                 </button>
-                {/* <ToastContainer
-                  position="top-right"
-                  autoClose={5000}
-                  hideProgressBar={false}
-                  newestOnTop={false}
-                  closeOnClick
-                  rtl={false}
-                  pauseOnFocusLoss
-                  draggable
-                  pauseOnHover
-                  theme="colored"
-                /> */}
               </div>
             </div>
           </div>

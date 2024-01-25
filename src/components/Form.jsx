@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Table from "./Table";
-import ReactTable from "./ReactTable";
+import  { Filtering } from "./Table/ReactTableFilter";
 
 const Form = () => {
-  console.log("Form");
   const [userList, setUserList] = useState([]);
   const [inputFields, setInputFields] = useState([
     {
@@ -68,7 +66,7 @@ const Form = () => {
     gender: "",
     country: "",
     hobbies: "",
-    languages:""
+    languages: "",
   });
 
   const countries = {
@@ -88,7 +86,8 @@ const Form = () => {
 
   const renderTable = () => {
     // return <Table info={userList} />;
-    return <ReactTable info={userList} />;
+    // return <ReactTable info={userList} />;
+    return <Filtering info={userList} />;
   };
 
   const handleFieldChange = (index, e) => {
@@ -103,12 +102,28 @@ const Form = () => {
 
   let removeFormFields = (i) => {
     let newFormValues = [...inputFields];
-    newFormValues.splice(i, 1);
+    console.log("i", i.target.id);
+    newFormValues.splice(i.target.id, 1);
     setInputFields(newFormValues);
   };
 
-  const addFields = () => {
-    setInputFields([...inputFields, { language: "" }]);
+  const addFields = (e) => {
+    if (
+      inputFields[inputFields.length - 1].language !== "" &&
+      inputFields.length < 10
+    ) {
+      setErrors((previous) => ({
+        ...previous,
+        languages: "",
+      }));
+      setInputFields([...inputFields, { language: "" }]);
+    }else{
+    setErrors((previous) => ({
+      ...previous,
+      languages:
+        "Please enter atleast one programming language in last give field",
+    }));
+  }
   };
 
   const addTextfield = () => {
@@ -136,11 +151,13 @@ const Form = () => {
               <i
                 className="fa fa-plus-circle"
                 onClick={addFields}
+                id={`${index}`}
                 style={{ color: "#74C0FC", fontSize: "25px" }}
               />
             ) : (
               <i
                 className="fa fa-minus-circle fa-2xl"
+                id={`${index}`}
                 onClick={removeFormFields}
                 style={{ color: "#ff0000", fontSize: "25px" }}
               />
@@ -160,7 +177,7 @@ const Form = () => {
       gender: "",
       country: "",
       hobbies: "",
-      languages:""
+      languages: "",
     });
 
     if (user.firstName === "") {
@@ -239,14 +256,14 @@ const Form = () => {
         languages: "Please enter atleast one programming language ",
       }));
       isValid = false;
-    } 
+    }
 
     return isValid;
   };
 
- const handleImage=(e)=>{
-  setFile(URL.createObjectURL(e.target.files[0]));
- }
+  const handleImage = (e) => {
+    setFile(URL.createObjectURL(e.target.files[0]));
+  };
 
   const handleSubmit = (e) => {
     if (forValidation()) {
@@ -277,7 +294,7 @@ const Form = () => {
         country: "",
         hobbies: [],
       });
-      setInputFields([{language:''}])
+      setInputFields([{ language: "" }]);
       setFile();
     } else {
       notify();
@@ -528,14 +545,12 @@ const Form = () => {
                 </div>
               </div>
               <div className="form-group row">
-              <div className="col">
-
-              <input type="file" onChange={handleImage} />
-
-              </div>
-              <div className="col">
-            <img src={file} height="300px" width="500px" />
-              </div>
+                <div className="col">
+                  <input type="file" onChange={handleImage} />
+                </div>
+                <div className="col">
+                  <img src={file} height="300px" width="500px" />
+                </div>
               </div>
 
               {/* Submit Button */}

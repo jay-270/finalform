@@ -7,7 +7,6 @@ const DeleteModal = ({
   index,
   getData,
 }) => {
-  console.log("In delete Modal 1");
   const [serial, setSerial] = useState();
   useEffect(() => {
     setSerial(index);
@@ -15,7 +14,6 @@ const DeleteModal = ({
 
   const deleteRow = () => {
     
-  console.log("In delete Modal 4");
     const str = localStorage.getItem("userData");
     const data = JSON.parse(str);
 
@@ -25,24 +23,9 @@ const DeleteModal = ({
     // alert("Data is deleted!!!⚠️💀")
   };
   
-  console.log("In delete Modal 2");
-  // const notify = () => {
-    
-  // console.log("In delete Modal 5");
-  //   toast.warn("The data of user has been deleted", {
-  //     position: "top-right",
-  //     autoClose: 5000,
-  //     hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     progress: undefined,
-  //     theme: "colored",
-  //   });
-  // };
+  
   const clickHandler = () => {
     
-  console.log("In delete Modal 3");
     deleteRow();
     // notify();
     handleCloseDelete();

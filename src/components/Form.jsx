@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import  { Filtering } from "./Table/ReactTableFilter";
+import { Filtering } from "./Table/ReactTableFilter";
 
 const Form = () => {
   const [userList, setUserList] = useState([]);
@@ -11,7 +11,6 @@ const Form = () => {
     },
   ]);
   const [file, setFile] = useState();
-  const [counter, setCounter] = useState(0);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("userData"));
@@ -117,13 +116,13 @@ const Form = () => {
         languages: "",
       }));
       setInputFields([...inputFields, { language: "" }]);
-    }else{
-    setErrors((previous) => ({
-      ...previous,
-      languages:
-        "Please enter atleast one programming language in last give field",
-    }));
-  }
+    } else {
+      setErrors((previous) => ({
+        ...previous,
+        languages:
+          "Please enter atleast one programming language in last give field",
+      }));
+    }
   };
 
   const addTextfield = () => {
@@ -549,7 +548,12 @@ const Form = () => {
                   <input type="file" onChange={handleImage} />
                 </div>
                 <div className="col">
-                  <img src={file} height="300px" width="500px" />
+                  <img
+                    alt="description"
+                    src={file}
+                    height="200px"
+                    width="400px"
+                  />
                 </div>
               </div>
 

@@ -163,7 +163,4 @@ export const Filtering = (props) => {
   );
 };
 
-export default {
-  title: "Examples/Filtering",
-  component: Filtering,
-};
+export default Filtering;

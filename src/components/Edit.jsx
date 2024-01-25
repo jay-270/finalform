@@ -558,7 +558,7 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
     gender: "",
     country: "",
     hobbies: [],
-    languages:[],
+    languages: [],
   });
 
   const [inputFields, setInputFields] = useState([
@@ -581,16 +581,17 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
   useEffect(() => {
     let existingData = JSON.parse(localStorage.getItem("userData"));
     const userData = existingData[index];
-  
-    if (userData) {     
+    if (userData) {
       setUser(userData);
-      const languagesList=userData.languages.map(language => ({ language }))
-      console.log("Language list:", languagesList); 
+      const languagesList = userData.languages.map((language) => ({
+        language,
+      }));
+      console.log("Language list:", languagesList);
       // Initialize inputFields with the languages from userData
       setInputFields(languagesList);
     }
   }, [index]);
-  
+
   const countries = {
     India: "India",
     USA: "USA",
@@ -664,7 +665,7 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
     }
     if (!user.email) {
       setErrors((previous) => ({
-      ...previous,
+        ...previous,
         email: "Please enter a email address.",
       }));
       isValid = false;
@@ -695,28 +696,28 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
 
   const handleFieldChange = (index, e) => {
     let formValues = [...inputFields];
+    console.log("formValues: ", formValues);
     formValues[index].language = e.target.value;
     setInputFields(formValues);
     console.log("Form values", formValues);
     setUser((previous) => ({
       ...previous,
-      languages: [...formValues[index]],
+      languages: [...formValues],
     }));
   };
-    // const handleFieldChange = (index, e) => {
-      //   let formValues = [...inputFields];
-      //   formValues[index][e.target.name] = e.target.value;
-      //   setInputFields(formValues);
-      //   const languageValues = formValues.map((field) => field.language);
-      //   console.log("Language values:", languageValues);
-      //   setUser((previous) => ({
-        //     ...previous,
-        //     languages: languageValues,
-        //   }));
-        // };
-        
-        
-        let removeFormFields = (i) => {
+  // const handleFieldChange = (index, e) => {
+  //   let formValues = [...inputFields];
+  //   formValues[index][e.target.name] = e.target.value;
+  //   setInputFields(formValues);
+  //   const languageValues = formValues.map((field) => field.language);
+  //   console.log("Language values:", languageValues);
+  //   setUser((previous) => ({
+  //     ...previous,
+  //     languages: languageValues,
+  //   }));
+  // };
+
+  let removeFormFields = (i) => {
     let newFormValues = [...inputFields];
 
     newFormValues.splice(i.target.id, 1);
@@ -732,17 +733,19 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
         ...previous,
         languages: "",
       }));
-      setInputFields([...inputFields, { language: "" }]);
-    }else{
-    setErrors((previous) => ({
-      ...previous,
-      languages:
-        "Please enter atleast one programming language in last give field",
-    }));
-  }
+
+      setInputFields([...inputFields, { language: { language: "" } }]);
+    } else {
+      setErrors((previous) => ({
+        ...previous,
+        languages:
+          "Please enter atleast one programming language in last give field",
+      }));
+    }
   };
 
-  const addTextfield = () => {  
+  const addTextfield = () => {
+    console.log("input fields", inputFields);
     return inputFields.map((value, index) => {
       return (
         <div className="form-group row" key={index}>
@@ -756,7 +759,7 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
               }
               id={`${index}`}
               name="language"
-              value={inputFields[index].language}
+              value={inputFields[index].language.language}
               placeholder="Enter your programming languages...."
               onChange={(e) => handleFieldChange(index, e)}
             />

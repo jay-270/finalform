@@ -734,7 +734,7 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
         languages: "",
       }));
 
-      setInputFields([...inputFields, { language: { language: "" } }]);
+      setInputFields([...inputFields, { language: ""}]);
     } else {
       setErrors((previous) => ({
         ...previous,
@@ -759,7 +759,8 @@ const Edit = ({ showModal, handleClose, index, getData }) => {
               }
               id={`${index}`}
               name="language"
-              value={inputFields[index].language.language}
+              // value={inputFields[index].language.language}
+              value={value.language}
               placeholder="Enter your programming languages...."
               onChange={(e) => handleFieldChange(index, e)}
             />
